@@ -1,6 +1,8 @@
 package domain
 
 import (
+	"log"
+
 	"github.com/msoovali/aa-settlements/config"
 	"github.com/msoovali/aa-settlements/domain/clock"
 	"github.com/msoovali/aa-settlements/domain/localizer"
@@ -15,11 +17,7 @@ type service struct {
 	clock     clock.Clock
 }
 
-func New(ports *port.Ports, config *config.Config, clock clock.Clock) (*service, error) {
-	localizer, err := ports.TranslationsPort.Get(config.Locale)
-	if err != nil {
-		return nil, err
-	}
+func New(ports *port.Ports, config *config.Config, clock clock.Clock, localizer *localizer.Localizer) (*service, error) {
 	return &service{
 		ports:     ports,
 		config:    config,
@@ -33,6 +31,7 @@ func (s *service) CreateNextMonthSettlements() error {
 	if err != nil {
 		return err
 	}
+	log.Println("Preparing next month spreadsheet")
 	err = s.prepareNextMonthSheet(newSheet)
 	if err != nil {
 		return err
@@ -52,9 +51,11 @@ func (s *service) createSheet() (*sheet.Sheet, error) {
 		if err != nil {
 			return nil, err
 		}
+		log.Println("Creating next month spreadsheet")
 		return sheet.CopyNextMonthFromSheetId(s.ports.SheetPort, s.ports.DrivePort, lastMonthSheetId, s.clock)
 	}
 
+	log.Println("Creating next month spreadsheet")
 	return sheet.CopyNextMonthFromPrevious(s.ports.SheetPort, s.ports.DrivePort, s.clock)
 }
 

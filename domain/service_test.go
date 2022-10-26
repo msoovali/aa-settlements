@@ -12,55 +12,6 @@ import (
 	"github.com/msoovali/aa-settlements/domain/port"
 )
 
-func TestNew(t *testing.T) {
-	t.Run("translationPortError_returnsError", func(t *testing.T) {
-		ports := &port.Ports{
-			TranslationsPort: &mocks.TranslationsPortMock{
-				FakeGet: func(locale string) (*localizer.Localizer, error) {
-					return nil, fmt.Errorf("Port error")
-				},
-			},
-		}
-
-		_, err := New(ports, &config.Config{}, clock.RealClock{})
-
-		if err == nil {
-			t.Errorf("Should return error if unable to get localizer")
-		}
-	})
-
-	t.Run("success", func(t *testing.T) {
-		expectedLocalizer := &localizer.Localizer{}
-		translationsPortMock := getTranslationsPortMock(expectedLocalizer)
-		ports := &port.Ports{
-			TranslationsPort: translationsPortMock,
-		}
-		config := &config.Config{}
-		clock := clock.RealClock{}
-
-		service, err := New(ports, config, clock)
-
-		if err != nil {
-			t.Errorf("Should not return error. Received: %s", err)
-		}
-		if service.ports != ports {
-			t.Errorf("Should assign injected ports")
-		}
-		if service.config != config {
-			t.Errorf("Should assign injected config")
-		}
-		if service.clock != clock {
-			t.Errorf("Should assign injected clock")
-		}
-		if translationsPortMock.GetCalls != 1 {
-			t.Errorf("Should call translationPort.Get 1 times, but called %d times", translationsPortMock.GetCalls)
-		}
-		if service.localizer != expectedLocalizer {
-			t.Errorf("Should assign localizer from translation port")
-		}
-	})
-}
-
 func TestCreateNextMonthSettlements(t *testing.T) {
 	config := getConfig()
 	t.Run("ifCurrentMonthIsJanary_shouldCallArchiver", func(t *testing.T) {
@@ -79,7 +30,7 @@ func TestCreateNextMonthSettlements(t *testing.T) {
 			Time: &_time,
 		}
 
-		service, _ := New(&ports, config, clock)
+		service, _ := New(&ports, config, clock, &localizer.Localizer{})
 		err := service.CreateNextMonthSettlements()
 
 		if err != nil {
@@ -116,7 +67,7 @@ func TestCreateNextMonthSettlements(t *testing.T) {
 				Time: &_time,
 			}
 
-			service, _ := New(&ports, config, clock)
+			service, _ := New(&ports, config, clock, &localizer.Localizer{})
 			err := service.CreateNextMonthSettlements()
 
 			if err != nil {
@@ -148,7 +99,7 @@ func TestCreateNextMonthSettlements(t *testing.T) {
 			ArchiverPort:     archiverPort,
 		}
 
-		service, _ := New(&ports, config, clock.RealClock{})
+		service, _ := New(&ports, config, clock.RealClock{}, &localizer.Localizer{})
 		err := service.CreateNextMonthSettlements()
 
 		if err != nil {

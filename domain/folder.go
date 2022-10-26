@@ -2,7 +2,7 @@ package domain
 
 import (
 	"fmt"
-	"time"
+	"log"
 
 	"github.com/msoovali/aa-settlements/config"
 )
@@ -16,6 +16,7 @@ func (s *service) createFolders(folders []config.Folder, parentFolderId string) 
 		if folderName == "{{month}}" {
 			folderName = s.getCurrentMonthFolderName()
 		}
+		log.Printf("Creating folder %s", folderName)
 		id, err := s.ports.DrivePort.CreateFolder(folderName, parentFolderId)
 		if err != nil {
 			return fmt.Errorf("failed to create folder %s. Error: %v", folderName, err)
@@ -32,5 +33,5 @@ func (s *service) createFolders(folders []config.Folder, parentFolderId string) 
 }
 
 func (s *service) getCurrentMonthFolderName() string {
-	return s.localizer.Translate(time.Now().Month().String())
+	return s.localizer.Translate(s.clock.Now().Month().String())
 }

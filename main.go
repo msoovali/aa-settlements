@@ -40,7 +40,11 @@ func main() {
 	if err != nil {
 		log.Fatalf("Failed to create ports: %v", err)
 	}
-	service, err := domain.New(ports, conf, clock.RealClock{})
+	localizer, err := ports.TranslationsPort.Get(conf.Locale)
+	if err != nil {
+		log.Fatalf("Failed to load locale: %v", err)
+	}
+	service, err := domain.New(ports, conf, clock.RealClock{}, localizer)
 	if err != nil {
 		log.Fatalf("Failed to create service: %v", err)
 	}
@@ -49,6 +53,7 @@ func main() {
 	if err != nil {
 		log.Fatalf("Failed to create next month settlements: %v", err)
 	}
+	log.Println("Next month settlements prepared successfully!")
 }
 
 func createPorts(googleApiClient *http.Client, config *config.Config) (*port.Ports, error) {
