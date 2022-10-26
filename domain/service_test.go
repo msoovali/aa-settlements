@@ -14,7 +14,7 @@ import (
 
 func TestCreateNextMonthSettlements(t *testing.T) {
 	config := getConfig()
-	t.Run("ifCurrentMonthIsJanary_shouldCallArchiver", func(t *testing.T) {
+	t.Run("ifCurrentMonthIsJanuary_shouldCallArchiver", func(t *testing.T) {
 		translationsPort := getTranslationsPortMock(&localizer.Localizer{})
 		drivePort := &mocks.DrivePortMock{}
 		sheetPort := &mocks.SheetPortMock{}
