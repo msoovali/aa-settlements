@@ -23,12 +23,12 @@ import (
 
 func main() {
 	log.Println("Next month settlement creation started!")
-	conf, err := config.LoadConfiguration("config.json")
+	conf, err := config.LoadConfiguration("conf/config.json")
 	if err != nil {
 		log.Fatalf("Unable to read config.json file: %v", err)
 	}
 	ctx := context.Background()
-	credentials, err := os.ReadFile("credentials.json")
+	credentials, err := os.ReadFile("conf/credentials.json")
 	if err != nil {
 		log.Fatalf("Unable to read credentials.json file: %v", err)
 	}

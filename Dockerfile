@@ -15,6 +15,7 @@ FROM alpine:3.16
 RUN apk add ca-certificates
 
 COPY --from=BUILD /tmp/app/out/aa-settlements /app/aa-settlements
+COPY --from=BUILD /tmp/app/locales /app/locales
 
 WORKDIR /app
 

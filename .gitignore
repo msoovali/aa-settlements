@@ -15,5 +15,4 @@
 # vendor/
 
 samples
-config.json
-credentials.json
+conf
