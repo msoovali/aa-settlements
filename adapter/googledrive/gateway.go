@@ -43,14 +43,15 @@ func (g *googleDriveGateway) CopySpreadsheetFromId(targetId string, destinationN
 }
 
 func (g *googleDriveGateway) CreateFolder(name string, parentFolderId string) (string, error) {
-	log.Printf("Creating folder %s to parent folder %s", name, parentFolderId)
 	existingFolder, err := g.initSearch(name, parentFolderId, Folder).find()
 	if err != nil {
-		return "", fmt.Errorf("failed to determine if folder already exists: %v", err)
+		return "", fmt.Errorf("failed to determine if folder %s already exists: %v", name, err)
 	}
 	if existingFolder != nil {
+		log.Printf("Folder %s already existis in parent %s. Skipping creation.", name, parentFolderId)
 		return existingFolder.Id, nil
 	}
+	log.Printf("Creating folder %s to parent folder %s", name, parentFolderId)
 	folder := &drive.File{
 		Name:     name,
 		MimeType: string(Folder),
