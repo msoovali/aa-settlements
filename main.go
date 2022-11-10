@@ -28,7 +28,7 @@ func main() {
 		log.Fatalf("Unable to read config.json file: %v", err)
 	}
 	ctx := context.Background()
-	credentials, err := os.ReadFile("conf/credentials.json")
+	credentials, err := os.ReadFile("conf/credentials/credentials.json")
 	if err != nil {
 		log.Fatalf("Unable to read credentials.json file: %v", err)
 	}
